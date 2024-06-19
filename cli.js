@@ -1,5 +1,5 @@
-import { Sequelize } from "sequelize";
-import express from 'express'
+import { DataTypes, Model, Sequelize } from "sequelize";
+import 'dotenv/config'
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialectOptions: {
@@ -10,19 +10,42 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   }
 })
 
+class Blog extends Model { }
+
+Blog.init({
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  author: {
+    type: DataTypes.TEXT,
+  },
+  url: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  title: {
+    type: DataTypes.TEXT,
+    allowNull: false
+  },
+  likes: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  }
+}, {
+  sequelize,
+  underscored: true,
+  timestamps: false,
+  modelName: 'blog'
+})
+
 sequelize
   .authenticate()
-  .then(() => {
-    console.log('Connection has been established successfully');
+  .then(async () => {
+    const blogs = await Blog.findAll()
+    for (const blog of blogs) {
+      console.log(`${blog.author}: '${blog.title}', ${blog.likes} likes`);
+    }
+    await sequelize.close()
   })
-
-const app = express()
-
-app.use(express.json())
-
-
-const PORT = 3003
-// app.listen(PORT, () => {
-//   console.log(`Server listen on ${PORT}`);
-// })
-
