@@ -22,14 +22,23 @@ const tokenExtractor = (req, res, next) => {
 const blogsRouter = Router()
 
 blogsRouter.get('/', async (req, res) => {
-  const blogs = await Blog.findAll()
+  const blogs = await Blog.findAll({
+    attributes: {
+      exclude: ['UserId']
+    },
+    include: {
+      model: User,
+      attributes: ['name']
+    }
+  })
   res.json(blogs)
 })
 
 blogsRouter.post('/', tokenExtractor, async (req, res, next) => {
   try {
     const user = await User.findByPk(req.decodedToken.id)
-    const blog = await Blog.create({...req.body, userId: user.id})
+    console.log(user)
+    const blog = await Blog.create({ ...req.body, UserId: user.id })
     return res.json(blog)
   } catch (error) {
     // return res.status(400).json({ error })

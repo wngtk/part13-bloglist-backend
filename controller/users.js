@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { User } from "../models/index.js";
+import { Blog, User } from "../models/index.js";
 
 const usersRouter = Router()
 
@@ -15,7 +15,12 @@ usersRouter.post('/', async (req, res, next) => {
 
 // listing all users
 usersRouter.get('/', async (req, res) => {
-  const users = await User.findAll()
+  const users = await User.findAll({
+    include: {
+      model: Blog,
+      attributes: { exclude: ['UserId']}
+    }
+  })
   res.json(users)
 })
 
