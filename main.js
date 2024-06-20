@@ -3,13 +3,14 @@ import { connectToDatabase } from './utils/db.js'
 import notesRouter from './controller/notes.js'
 import { PORT } from './utils/config.js'
 import blogsRouter from './controller/blogs.js'
-import 'express-async-errors'
+import usersRouter from './controller/users.js'
 
 const app = express()
 
 app.use(express.json())
 app.use('/api/notes', notesRouter)
 app.use('/api/blogs', blogsRouter)
+app.use('/api/users', usersRouter)
 
 const errorHandler = (error, req, res, next) => {
   console.error('接收到了一个 error')
