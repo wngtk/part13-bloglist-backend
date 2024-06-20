@@ -1,5 +1,23 @@
 import { Router } from "express"
-import { Blog } from "../models/index.js"
+import { Blog, User } from "../models/index.js"
+import jwt from 'jsonwebtoken'
+import { SECRET } from "../utils/config.js"
+
+const tokenExtractor = (req, res, next) => {
+  const authorization = req.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith(`bearer `)) {
+    try {
+      console.log('token ', authorization.substring(7))
+      req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+    } catch (err) {
+      console.log(err)
+      return res.status(401).json({ error: 'token invalid' })
+    }
+  } else {
+    return res.status(401).json({ error: 'token missing '})
+  }
+  next()
+}
 
 const blogsRouter = Router()
 
@@ -8,9 +26,10 @@ blogsRouter.get('/', async (req, res) => {
   res.json(blogs)
 })
 
-blogsRouter.post('/', async (req, res, next) => {
+blogsRouter.post('/', tokenExtractor, async (req, res, next) => {
   try {
-    const blog = await Blog.create(req.body)
+    const user = await User.findByPk(req.decodedToken.id)
+    const blog = await Blog.create({...req.body, userId: user.id})
     return res.json(blog)
   } catch (error) {
     // return res.status(400).json({ error })
@@ -23,7 +42,13 @@ const blogFinder = async (req, res, next) => {
   next()
 }
 
-blogsRouter.delete('/:id', async (req, res) => {
+
+blogsRouter.delete('/:id', tokenExtractor, async (req, res) => {
+  const user = await User.findByPk(req.decodedToken.id)
+  const blog = Blog.findByPk(req.id)
+  if (blog.userId != user.id) {
+    return res.status(401).json({ error: 'you are not the owner' })  
+  }
   try {
     const n = await Blog.destroy({
       where: {
