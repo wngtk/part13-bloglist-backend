@@ -17,6 +17,11 @@ blogsRouter.post('/', async (req, res) => {
   }
 })
 
+const blogFinder = async (req, res, next) => {
+  req.blog = await Blog.findByPk(req.params.id)
+  next()
+}
+
 blogsRouter.delete('/:id', async (req, res) => {
   try {
     const n = await Blog.destroy({
@@ -27,6 +32,16 @@ blogsRouter.delete('/:id', async (req, res) => {
     return res.json(n)
   } catch (error) {
     return res.status(400).json({ error })
+  }
+})
+
+blogsRouter.put('/:id', blogFinder, async (req, res) => {
+  if (req.blog) {
+    req.blog.likes = req.body.likes
+    await req.blog.save()
+    res.json(req.blog)
+  } else {
+    req.status(404).end()
   }
 })
 
