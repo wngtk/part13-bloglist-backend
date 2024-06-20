@@ -15,8 +15,7 @@ app.use('/api/users', usersRouter)
 const errorHandler = (error, req, res, next) => {
   console.error('接收到了一个 error')
 
-  return res.status(400).send({ error })
-  // next(error)
+  return res.status(400).send({ error: error.errors[0].message })
 }
 
 app.use(errorHandler)
