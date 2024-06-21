@@ -1,9 +1,15 @@
 import { Router } from "express";
 import { Blog, ReadingList, User } from "../models/index.js";
+import { Op } from "sequelize";
 
 const usersRouter = Router()
 
 usersRouter.get('/:id', async (req, res) => {
+  const where = {}
+  if (req.query.read) {
+    where.read = req.query.read
+  }
+
   const user = await User.findByPk(req.params.id, {
     attributes: ['name', 'username'],
     include: {
@@ -15,13 +21,19 @@ usersRouter.get('/:id', async (req, res) => {
       },
       through: {
         as: "readinglists",
-        attributes: ['read', 'id']
-      }
+        attributes: ['read', 'id'],
+        where
+      },
 
     }
   })
 
-  res.json({ name: user.name, username: user.username, readings: user.marked_blogs })
+  if (user) {
+    res.json({ name: user.name, username: user.username, readings: user.marked_blogs })
+  } else {
+    res.status(404).end()
+  }
+
 })
 
 // adding a new user
