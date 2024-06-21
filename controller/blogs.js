@@ -26,7 +26,7 @@ blogsRouter.get('/', async (req, res) => {
   const where = {}
   if (req.query.search) {
     where.title = {
-      [Op.substring]: req.query.search
+      [Op.iRegexp]: req.query.search
     }
   }
 
