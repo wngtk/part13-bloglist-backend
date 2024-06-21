@@ -26,7 +26,6 @@ const runMigrations = async () => {
   const migrator = new Umzug(migrationConf)
   try {
     const migrations = await migrator.up()
-    console.log(migrations)
     console.log('Migrations up to date', {
       files: migrations.map(mig => mig.name)
     })
