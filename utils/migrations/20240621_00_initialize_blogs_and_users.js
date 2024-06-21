@@ -44,7 +44,7 @@ export const up = async ({ context: queryInterface }) => {
       defaultValue: DataTypes.NOW
     },
     updated_at: {
-      type: DataTypes.TIME,
+      type: DataTypes.DATE,
       defaultValue: DataTypes.NOW
     }
   })
