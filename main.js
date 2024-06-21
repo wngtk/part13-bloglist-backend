@@ -1,6 +1,6 @@
 import express from 'express'
 import { connectToDatabase } from './utils/db.js'
-import notesRouter from './controller/notes.js'
+// import notesRouter from './controller/notes.js'
 import { PORT } from './utils/config.js'
 import blogsRouter from './controller/blogs.js'
 import usersRouter from './controller/users.js'
@@ -10,7 +10,7 @@ import authorsRouter from './controller/authors.js'
 const app = express()
 
 app.use(express.json())
-app.use('/api/notes', notesRouter)
+// app.use('/api/notes', notesRouter)
 app.use('/api/blogs', blogsRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
