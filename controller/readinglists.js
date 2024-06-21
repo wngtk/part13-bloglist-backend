@@ -17,4 +17,15 @@ readingListsRouter.post('/', async (req, res) => {
   }
 })
 
+readingListsRouter.put('/:id', async (req, res) => {
+  const readinglist = await ReadingList.findByPk(req.params.id)
+  if (readinglist) {
+    readinglist.read = req.body.read
+    await readinglist.save()
+    res.json(readinglist)
+  } else {
+    res.status(404).end()
+  }
+})
+
 export default readingListsRouter
