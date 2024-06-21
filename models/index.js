@@ -16,5 +16,6 @@ Blog.belongsToMany(User, { through: ReadingList, as: 'users_marked' })
 export {
   // Note,
   Blog,
-  User
+  User,
+  ReadingList
 }

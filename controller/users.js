@@ -1,7 +1,28 @@
 import { Router } from "express";
-import { Blog, User } from "../models/index.js";
+import { Blog, ReadingList, User } from "../models/index.js";
 
 const usersRouter = Router()
+
+usersRouter.get('/:id', async (req, res) => {
+  const user = await User.findByPk(req.params.id, {
+    attributes: ['name', 'username'],
+    include: {
+      model: Blog,
+      as: 'marked_blogs',
+      attributes: {
+        exclude: ['UserId'],
+        include: ['year']
+      },
+      through: {
+        as: "readinglists",
+        attributes: ['read', 'id']
+      }
+
+    }
+  })
+
+  res.json({ name: user.name, username: user.username, readings: user.marked_blogs })
+})
 
 // adding a new user
 usersRouter.post('/', async (req, res, next) => {
