@@ -2,6 +2,7 @@ import Blog from "./blog.js";
 import ReadingList from "./reading_list.js";
 // import Note from "./note.js";
 import User from "./user.js";
+import ActiveToken from "./active_tokens.js";
 
 User.hasMany(Blog)
 Blog.belongsTo(User)
@@ -17,5 +18,6 @@ export {
   // Note,
   Blog,
   User,
-  ReadingList
+  ReadingList,
+  ActiveToken
 }

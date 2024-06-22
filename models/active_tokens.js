@@ -1,29 +1,27 @@
 import { DataTypes, Model } from "sequelize";
 import { sequelize } from "../utils/db.js";
 
-class User extends Model { }
+class ActiveToken extends Model { }
 
-User.init({
+ActiveToken.init({
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true
   },
-  name: {
-    type: DataTypes.STRING,
+  token: {
+    type: DataTypes.TEXT,
     allowNull: false
   },
-  username: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  disabled: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false
+  userId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: { model: 'users', key: 'id' }
   }
 }, {
   sequelize,
   underscored: true,
+  timestamps: false
 })
 
-export default User
+export default ActiveToken

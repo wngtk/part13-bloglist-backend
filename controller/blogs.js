@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { Blog, User } from "../models/index.js"
+import { ActiveToken, Blog, User } from "../models/index.js"
 import jwt from 'jsonwebtoken'
 import { SECRET } from "../utils/config.js"
 import { Op } from "sequelize"
@@ -10,6 +10,7 @@ const tokenExtractor = (req, res, next) => {
     try {
       console.log('token ', authorization.substring(7))
       req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+      req.token = authorization.substring(7)
     } catch (err) {
       console.log(err)
       return res.status(401).json({ error: 'token invalid' })
@@ -58,6 +59,15 @@ blogsRouter.get('/', async (req, res) => {
 blogsRouter.post('/', tokenExtractor, async (req, res, next) => {
   try {
     const user = await User.findByPk(req.decodedToken.id)
+    console.log(req.decodedToken)
+    const activeToken = await ActiveToken.findOne({
+      where: {
+        token: req.token
+      }
+    })
+    if (!activeToken) {
+      return res.status(401).json({ error: 'invalid token' })
+    }
     console.log(user)
     const blog = await Blog.create({ ...req.body, UserId: user.id })
     return res.json(blog)
